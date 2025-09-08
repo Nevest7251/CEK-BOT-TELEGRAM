@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Cek Bot Telegram</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: url("back.png") no-repeat center center fixed;
+      background-size: cover;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.9);
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.25);
+      width: 380px;
+      border-top: 5px solid #1E3A8A; /* biru tua */
+    }
+    h2 {
+      text-align: center;
+      color: #1E3A8A; /* biru tua */
+      margin-bottom: 15px;
+    }
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      margin-bottom: 10px;
+    }
+    button {
+      width: 100%;
+      background: #1E3A8A; /* biru tua */
+      color: white;
+      border: none;
+      padding: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: 0.2s;
+    }
+    button:hover { background: #2563EB; } /* biru lebih terang */
+    .result {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #333;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    td {
+      padding: 8px;
+      border: 1px solid #c0d0f0; /* biru muda */
+    }
+    td:first-child {
+      font-weight: bold;
+      background: #e0e7ff; /* biru lembut */
+      width: 40%;
+    }
+    .loading {
+      color: #1E3A8A; /* biru tua */
+      font-weight: bold;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Cek Bot Telegram</h2>
+    <input type="text" id="token" placeholder="Masukkan ID Bot (API Token)">
+    <button id="cek">Cek ID Bot</button>
+    <div class="result" id="hasil">
+      Status: menunggu input
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("cek").onclick = async () => {
+      const token = document.getElementById("token").value.trim();
+      const hasil = document.getElementById("hasil");
+
+      if (!token) {
+        hasil.innerHTML = "Masukkan token bot terlebih dahulu.";
+        return;
+      }
+
+      hasil.innerHTML = "<p class='loading'>⏳ Status: Proses cek id bot...</p>";
+
+      try {
+        // delay 3 detik
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        const res = await fetch(`https://api.telegram.org/bot${token}/getMe`);
+        const data = await res.json();
+
+        if (data.ok) {
+          hasil.innerHTML = `
+            <table>
+              <tr><td>Nama Bot</td><td>${data.result.first_name}</td></tr>
+              <tr><td>Username</td><td>@${data.result.username}</td></tr>
+              <tr><td>ID Bot</td><td>${data.result.id}</td></tr>
+              <tr><td>Status</td><td>✅ selesai</td></tr>
+            </table>
+          `;
+        } else {
+          hasil.innerHTML = "<p style='color:#1E3A8A;'>❌ Token tidak valid atau gagal cek.</p>";
+        }
+      } catch (err) {
+        hasil.innerHTML = "<p style='color:#1E3A8A;'>Error: " + err + "</p>";
+      }
+    };
+  </script>
+</body>
+</html>
